@@ -28,10 +28,10 @@ class AutoIGBot(discord.Client):
                 if "instagram.com/reel/" in word:
                     # 清除網址中可能的參數，例如 utm
                     clean_url = word.split("?")[0]
-                    converted_url = clean_url.replace("https://www.instagram.com", "https://g.ddinstagram.com")\
-                                             .replace("http://www.instagram.com", "https://g.ddinstagram.com")\
-                                             .replace("https://instagram.com", "https://g.ddinstagram.com")\
-                                             .replace("http://instagram.com", "https://g.ddinstagram.com")
+                    converted_url = clean_url.replace("https://www.instagram.com", "https://ddinstagram.com")\
+                                             .replace("http://www.instagram.com", "https://ddinstagram.com")\
+                                             .replace("https://instagram.com", "https://ddinstagram.com")\
+                                             .replace("http://instagram.com", "https://ddinstagram.com")
                     await message.channel.send(f"🔁 已轉換 IG Reels 連結：\n{converted_url}")
                     break
 
