@@ -1,13 +1,15 @@
+
 import discord
-from discord import app_commands
 import os
 
 TOKEN = os.getenv("TOKEN")
 
-class GGInstaBot(discord.Client):
+class AutoIGBot(discord.Client):
     def __init__(self):
-        super().__init__(intents=discord.Intents.default())
-        self.tree = app_commands.CommandTree(self)
+        intents = discord.Intents.default()
+        intents.message_content = True  # 開啟讀取訊息內容的權限
+        super().__init__(intents=intents)
+        self.tree = discord.app_commands.CommandTree(self)
 
     async def on_ready(self):
         print(f"✅ Bot 上線：{self.user}")
@@ -16,22 +18,23 @@ class GGInstaBot(discord.Client):
         except Exception as e:
             print(f"❌ 指令同步失敗：{e}")
 
-client = GGInstaBot()
+    async def on_message(self, message: discord.Message):
+        if message.author.bot:
+            return
 
-@client.tree.command(name="ig", description="轉換 IG 連結成 g.ginstagram.com 可播放影片")
-@app_commands.describe(url="請貼上 Instagram 的貼文或 Reels 網址")
-async def ig(interaction: discord.Interaction, url: str):
-    await interaction.response.defer()
-    if "instagram.com" not in url:
-        await interaction.followup.send("⚠️ 請貼上有效的 Instagram 網址")
-        return
+        # 偵測 IG Reels 連結
+        if "instagram.com/reel/" in message.content:
+            for word in message.content.split():
+                if "instagram.com/reel/" in word:
+                    # 清除網址中可能的參數，例如 utm
+                    clean_url = word.split("?")[0]
+                    converted_url = clean_url.replace("https://www.instagram.com", "https://g.ddinstagram.com")\
+                                             .replace("http://www.instagram.com", "https://g.ddinstagram.com")\
+                                             .replace("https://instagram.com", "https://g.ddinstagram.com")\
+                                             .replace("http://instagram.com", "https://g.ddinstagram.com")
+                    await message.channel.send(f"🔁 已轉換 IG Reels 連結：\n{converted_url}")
+                    break
 
-    # 將 IG 網址轉為 InstaFix 的 g.g 預覽方式
-    new_url = url.replace("https://www.instagram.com", "https://www.ddinstagram.com")\
-                 .replace("http://www.instagram.com", "https://www.ddinstagram.com")\
-                 .replace("https://instagram.com", "https://ddinstagram.com")\
-                 .replace("http://instagram.com", "https://ddinstagram.com")
-
-    await interaction.followup.send(f"🎥 已轉換連結：\n{new_url}")
+client = AutoIGBot()
 
 client.run(TOKEN)
