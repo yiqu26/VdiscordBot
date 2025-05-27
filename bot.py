@@ -56,5 +56,4 @@ async def ig(interaction: discord.Interaction, url: str):
     except Exception as e:
         print("❌ 發生錯誤：", e)
         await interaction.followup.send("❌ 發生錯誤，請稍後再試")
-
 client.run(TOKEN)
