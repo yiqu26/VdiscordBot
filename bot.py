@@ -6,7 +6,7 @@ TOKEN = os.getenv("TOKEN")
 class AutoIGBot(discord.Client):
     def __init__(self):
         intents = discord.Intents.default()
-        intents.message_content = True  # 開啟讀取訊息內容的權限
+        intents.message_content = True
         super().__init__(intents=intents)
         self.tree = discord.app_commands.CommandTree(self)
 
@@ -21,24 +21,26 @@ class AutoIGBot(discord.Client):
         if message.author.bot:
             return
 
-        # 偵測 IG Reels 連結
         if "instagram.com/reel/" in message.content:
             for word in message.content.split():
                 if "instagram.com/reel/" in word:
-                    # 清除網址中可能的參數，例如 utm
                     clean_url = word.split("?")[0]
                     converted_url = clean_url.replace("https://www.instagram.com", "https://ddinstagram.com")\
                                              .replace("http://www.instagram.com", "https://ddinstagram.com")\
                                              .replace("https://instagram.com", "https://ddinstagram.com")\
                                              .replace("http://instagram.com", "https://ddinstagram.com")
+
                     try:
-                        await message.delete()  # ✅ 自動刪除原始 IG 連結訊息
+                        await message.delete()
                     except discord.Forbidden:
-                        print("⚠️ 沒有權限刪除訊息（請確認有開 Manage Messages）")
+                        print("⚠️ 沒有權限刪除訊息")
                     except discord.HTTPException as e:
                         print(f"⚠️ 刪除訊息失敗：{e}")
 
-                    await message.channel.send(f"🔁 已轉換 IG Reels 連結：\n{converted_url}")
+                    sender = message.author.display_name  # 取得暱稱或名稱
+                    await message.channel.send(
+                        f"👤 由 @{sender} 提供：\n🔁 已轉換 IG Reels 連結：\n{converted_url}"
+                    )
                     break
 
 client = AutoIGBot()
