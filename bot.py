@@ -37,9 +37,9 @@ class AutoIGBot(discord.Client):
                     except discord.HTTPException as e:
                         print(f"⚠️ 刪除訊息失敗：{e}")
 
-                    sender = message.author.display_name  # 取得暱稱或名稱
+                    sender = message.author.display_name
                     await message.channel.send(
-                        f"👤 由 @{sender} 提供：\n🔁 已轉換 IG Reels 連結：\n{converted_url}"
+                        f"🔁 **由 @{sender} 提供的 IG Reels：**\n👉 {converted_url}"
                     )
                     break
 
