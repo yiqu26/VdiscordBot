@@ -32,6 +32,12 @@ class AutoIGBot(discord.Client):
                                              .replace("http://www.instagram.com", "https://ddinstagram.com")\
                                              .replace("https://instagram.com", "https://ddinstagram.com")\
                                              .replace("http://instagram.com", "https://ddinstagram.com")
+                     try:
+                    await message.delete()  # 🧹 刪除使用者的原始訊息
+                    except discord.Forbidden:
+                    print("⚠️ 沒有權限刪除訊息（需要管理訊息權限）")
+                    except discord.HTTPException as e:
+                    print(f"⚠️ 刪除失敗：{e}")
                     await message.channel.send(f"🔁 已轉換 IG Reels 連結：\n{converted_url}")
                     break
 
