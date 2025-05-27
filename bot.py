@@ -32,6 +32,6 @@ async def ig(interaction: discord.Interaction, url: str):
                  .replace("https://instagram.com", "https://ddinstagram.com")\
                  .replace("http://instagram.com", "https://ddinstagram.com")
 
-    await interaction.followup.send(f"🎥 已轉換連結：\\n{new_url}")
+    await interaction.followup.send(f"🎥 已轉換連結：\n{new_url}")
 
 client.run(TOKEN)
