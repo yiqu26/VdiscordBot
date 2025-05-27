@@ -27,9 +27,9 @@ async def ig(interaction: discord.Interaction, url: str):
         return
 
     # 將 IG 網址轉為 InstaFix 的 g.g 預覽方式
-    new_url = url.replace("https://www.instagram.com", "https://www.ddinstagram.com")\\
-                 .replace("http://www.instagram.com", "https://www.ddinstagram.com")\\
-                 .replace("https://instagram.com", "https://ddinstagram.com")\\
+    new_url = url.replace("https://www.instagram.com", "https://www.ddinstagram.com")\
+                 .replace("http://www.instagram.com", "https://www.ddinstagram.com")\
+                 .replace("https://instagram.com", "https://ddinstagram.com")\
                  .replace("http://instagram.com", "https://ddinstagram.com")
 
     await interaction.followup.send(f"🎥 已轉換連結：\\n{new_url}")
