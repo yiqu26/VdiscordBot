@@ -3,7 +3,7 @@ import os
 
 TOKEN = os.getenv("TOKEN")
 
-class AutoIGBot(discord.Client):
+class AutoMediaBot(discord.Client):
     def __init__(self):
         intents = discord.Intents.default()
         intents.message_content = True
@@ -21,6 +21,9 @@ class AutoIGBot(discord.Client):
         if message.author.bot:
             return
 
+        sender = message.author.display_name
+
+        # 偵測 IG Reels 連結
         if "instagram.com/reel/" in message.content:
             for word in message.content.split():
                 if "instagram.com/reel/" in word:
@@ -29,19 +32,32 @@ class AutoIGBot(discord.Client):
                                              .replace("http://www.instagram.com", "https://www.ddinstagram.com")\
                                              .replace("https://instagram.com", "https://ddinstagram.com")\
                                              .replace("http://instagram.com", "https://ddinstagram.com")
-
                     try:
                         await message.delete()
                     except discord.Forbidden:
-                        print("⚠️ 沒有權限刪除訊息")
-                    except discord.HTTPException as e:
-                        print(f"⚠️ 刪除訊息失敗：{e}")
-
-                    sender = message.author.display_name
+                        print("⚠️ 沒有權限刪除 IG 訊息")
                     await message.channel.send(
-                        f"🔁 **由 @{sender} 提供的 IG Reels：**\n👉 {converted_url}"
+                        f"🎬 **由 @{sender} 提供的 IG Reels：**\n👉 {converted_url}"
                     )
                     break
 
-client = AutoIGBot()
+        # 偵測 Bilibili 連結
+        elif "bilibili.com/video/" in message.content:
+            for word in message.content.split():
+                if "bilibili.com/video/" in word:
+                    clean_url = word.split("?")[0]
+                    converted_url = clean_url.replace("https://www.bilibili.com", "https://www.vxbilibili.com")\
+                                             .replace("http://www.bilibili.com", "https://www.vxbilibili.com")\
+                                             .replace("https://bilibili.com", "https://www.vxbilibili.com")\
+                                             .replace("http://bilibili.com", "https://www.vxbilibili.com")
+                    try:
+                        await message.delete()
+                    except discord.Forbidden:
+                        print("⚠️ 沒有權限刪除 Bilibili 訊息")
+                    await message.channel.send(
+                        f"🎬 **由 @{sender} 提供的 Bilibili 影片：**\n👉 {converted_url}"
+                    )
+                    break
+
+client = AutoMediaBot()
 client.run(TOKEN)
