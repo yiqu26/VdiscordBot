@@ -49,7 +49,9 @@ class AutoMediaBot(discord.Client):
                     converted_url = clean_url.replace("https://www.bilibili.com", "https://www.vxbilibili.com")\
                                              .replace("http://www.bilibili.com", "https://www.vxbilibili.com")\
                                              .replace("https://bilibili.com", "https://www.vxbilibili.com")\
-                                             .replace("http://bilibili.com", "https://www.vxbilibili.com")
+                                             .replace("http://bilibili.com", "https://www.vxbilibili.com")\
+                                             .replace("https://b23.tv", "https://vxb23.tv")
+                    
                     try:
                         await message.delete()
                     except discord.Forbidden:
