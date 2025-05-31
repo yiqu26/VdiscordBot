@@ -50,6 +50,19 @@ class AutoMediaBot(discord.Client):
                     await self.send_with_webhook(message, content)
                     break
 
+        # IG 貼文 post
+        elif "instagram.com/p/" in message.content:
+            for word in message.content.split():
+                if "instagram.com/p/" in word:
+                    clean_url = word.split("?")[0]
+                    converted_url = clean_url.replace("https://www.instagram.com", "https://www.ddinstagram.com")\
+                                             .replace("http://www.instagram.com", "https://www.ddinstagram.com")\
+                                             .replace("https://instagram.com", "https://ddinstagram.com")\
+                                             .replace("http://instagram.com", "https://ddinstagram.com")
+                    content = f"🖼️ **由 @{sender} 提供的 IG 貼文：**\n👉 {converted_url}"
+                    await self.send_with_webhook(message, content)
+                    break
+
         # Bilibili 影片
         elif "bilibili.com/video/" in message.content:
             for word in message.content.split():
