@@ -32,54 +32,69 @@ class AutoMediaBot(discord.Client):
         except:
             return url
 
+    def convert_instagram(self, url):
+        for pattern in [
+            "https://www.instagram.com", "http://www.instagram.com",
+            "https://instagram.com", "http://instagram.com"
+        ]:
+            if url.startswith(pattern):
+                return url.replace(pattern, "https://www.ddinstagram.com")
+        return url
+
+    def convert_bilibili(self, url):
+        for pattern in [
+            "https://www.bilibili.com", "http://www.bilibili.com",
+            "https://bilibili.com", "http://bilibili.com"
+        ]:
+            if url.startswith(pattern):
+                return url.replace(pattern, "https://www.vxbilibili.com")
+        return url
+
     async def on_message(self, message: discord.Message):
         if message.author.bot:
             return
 
         content = message.content
+        sender = message.author.display_name
         urls = content.split()
 
         for word in urls:
             url = word.split("?")[0]
 
-            # 展開短網址（b23.tv 或 IG 短參數）
             if "b23.tv/" in url or ("instagram.com" in url and "?" in word):
                 url = await self.expand_url(word)
 
             url = self.remove_query_params(url)
 
+            try:
+                await message.delete()
+            except discord.Forbidden:
+                print("⚠️ 沒有刪除訊息權限")
+
             if "instagram.com/reel/" in url:
-                converted = url.replace("https://www.instagram.com", "https://www.ddinstagram.com")\
-                               .replace("http://www.instagram.com", "https://www.ddinstagram.com")\
-                               .replace("https://instagram.com", "https://ddinstagram.com")\
-                               .replace("http://instagram.com", "https://ddinstagram.com")
-                await message.channel.send(f"🎬 IG Reels 轉換：\n👉 {converted}")
+                converted = self.convert_instagram(url)
+                await message.channel.send(f"🎬 由 @{sender} 提供的 IG Reels：
+👉 {converted}")
                 return
 
             elif "instagram.com/p/" in url:
-                converted = url.replace("https://www.instagram.com", "https://www.ddinstagram.com")\
-                               .replace("http://www.instagram.com", "https://www.ddinstagram.com")\
-                               .replace("https://instagram.com", "https://ddinstagram.com")\
-                               .replace("http://instagram.com", "https://ddinstagram.com")
-                await message.channel.send(f"🖼️ IG 貼文轉換：\n👉 {converted}")
+                converted = self.convert_instagram(url)
+                await message.channel.send(f"🖼️ 由 @{sender} 提供的 IG 貼文：
+👉 {converted}")
                 return
 
             elif "bilibili.com/video/" in url:
-                converted = url.replace("https://www.bilibili.com", "https://www.vxbilibili.com")\
-                               .replace("http://www.bilibili.com", "https://www.vxbilibili.com")\
-                               .replace("https://bilibili.com", "https://www.vxbilibili.com")\
-                               .replace("http://bilibili.com", "https://www.vxbilibili.com")
-                await message.channel.send(f"📺 Bilibili 影片轉換：\n👉 {converted}")
+                converted = self.convert_bilibili(url)
+                await message.channel.send(f"📺 由 @{sender} 提供的 Bilibili 影片：
+👉 {converted}")
                 return
 
             elif "b23.tv/" in url:
                 real_url = await self.expand_url(url)
                 real_url = self.remove_query_params(real_url)
-                converted = real_url.replace("https://www.bilibili.com", "https://www.vxbilibili.com")\
-                                    .replace("http://www.bilibili.com", "https://www.vxbilibili.com")\
-                                    .replace("https://bilibili.com", "https://www.vxbilibili.com")\
-                                    .replace("http://bilibili.com", "https://www.vxbilibili.com")
-                await message.channel.send(f"📺 Bilibili 短連結轉換：\n👉 {converted}")
+                converted = self.convert_bilibili(real_url)
+                await message.channel.send(f"📺 由 @{sender} 提供的 Bilibili 短連結：
+👉 {converted}")
                 return
 
 client = AutoMediaBot()
