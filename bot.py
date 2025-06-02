@@ -33,10 +33,10 @@ class AutoMediaBot(discord.Client):
             for word in message.content.split():
                 if "instagram.com/reel/" in word or "instagram.com/p/" in word:
                     clean_url = simplify_url(word)
-                    converted_url = clean_url.replace("https://www.instagram.com", "https://ddinstagram.com")\
-                                             .replace("http://www.instagram.com", "https://ddinstagram.com")\
-                                             .replace("https://instagram.com", "https://ddinstagram.com")\
-                                             .replace("http://instagram.com", "https://ddinstagram.com")
+                    converted_url = clean_url.replace("https://www.instagram.com", "https://www.ddinstagram.com")\
+                                             .replace("http://www.instagram.com", "https://www.ddinstagram.com")\
+                                             .replace("https://instagram.com", "https://www.ddinstagram.com")\
+                                             .replace("http://instagram.com", "https://www.ddinstagram.com")
                     try:
                         await message.delete()
                     except discord.Forbidden:
