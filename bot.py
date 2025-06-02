@@ -73,28 +73,24 @@ class AutoMediaBot(discord.Client):
 
             if "instagram.com/reel/" in url:
                 converted = self.convert_instagram(url)
-                await message.channel.send(f"🎬 由 @{sender} 提供的 IG Reels：
-👉 {converted}")
+                await message.channel.send(f"🎬 由 @{sender} 提供的 IG Reels：\n👉 {converted}")
                 return
 
             elif "instagram.com/p/" in url:
                 converted = self.convert_instagram(url)
-                await message.channel.send(f"🖼️ 由 @{sender} 提供的 IG 貼文：
-👉 {converted}")
+                await message.channel.send(f"🖼️ 由 @{sender} 提供的 IG 貼文：\n👉 {converted}")
                 return
 
             elif "bilibili.com/video/" in url:
                 converted = self.convert_bilibili(url)
-                await message.channel.send(f"📺 由 @{sender} 提供的 Bilibili 影片：
-👉 {converted}")
+                await message.channel.send(f"📺 由 @{sender} 提供的 Bilibili 影片：\n👉 {converted}")
                 return
 
             elif "b23.tv/" in url:
                 real_url = await self.expand_url(url)
                 real_url = self.remove_query_params(real_url)
                 converted = self.convert_bilibili(real_url)
-                await message.channel.send(f"📺 由 @{sender} 提供的 Bilibili 短連結：
-👉 {converted}")
+                await message.channel.send(f"📺 由 @{sender} 提供的 Bilibili 短連結：\n👉 {converted}")
                 return
 
 client = AutoMediaBot()
