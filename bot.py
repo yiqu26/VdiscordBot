@@ -50,7 +50,10 @@ class AutoMediaBot(discord.Client):
 
                         async with aiohttp.ClientSession() as session:
                             for proxy in proxies:
-                                candidate = clean_url.replace("https://www.instagram.com", f"https://{proxy}")                                                     .replace("http://www.instagram.com", f"https://{proxy}")                                                     .replace("https://instagram.com", f"https://{proxy}")                                                     .replace("http://instagram.com", f"https://{proxy}")
+                                candidate = clean_url.replace("https://www.instagram.com", f"https://{proxy}")\
+                                                     .replace("http://www.instagram.com", f"https://{proxy}")\
+                                                     .replace("https://instagram.com", f"https://{proxy}")\
+                                                     .replace("http://instagram.com", f"https://{proxy}")
                                 if await self.try_fetch_url(session, candidate):
                                     converted_url = candidate
                                     break
@@ -65,8 +68,7 @@ class AutoMediaBot(discord.Client):
 
                         await asyncio.sleep(1.5)
                         await message.channel.send(
-                            f"🎬 由 @{sender} 提供的 IG Reels：
-👉 {converted_url}"
+                            f"🎬 由 @{sender} 提供的 IG Reels：\n👉 {converted_url}"
                         )
                         break
 
@@ -76,6 +78,7 @@ class AutoMediaBot(discord.Client):
                     if "bilibili.com/video/" in word or "b23.tv/" in word:
                         clean_url = simplify_url(word)
 
+                        # 嘗試解析短網址 b23.tv
                         if "b23.tv/" in clean_url:
                             try:
                                 timeout = aiohttp.ClientTimeout(total=5)
@@ -86,7 +89,12 @@ class AutoMediaBot(discord.Client):
                             except Exception as e:
                                 print(f"⚠️ 短連結解析失敗：{e}")
 
-                        converted_url = clean_url.replace("https://www.bilibili.com", "https://www.vxbilibili.com")                                                 .replace("http://www.bilibili.com", "https://www.vxbilibili.com")                                                 .replace("https://bilibili.com", "https://www.vxbilibili.com")                                                 .replace("http://bilibili.com", "https://www.vxbilibili.com")                                                 .replace("https://b23.tv", "https://vxb23.tv")                                                 .replace("http://b23.tv", "https://vxb23.tv")
+                        converted_url = clean_url.replace("https://www.bilibili.com", "https://www.vxbilibili.com")\
+                                                 .replace("http://www.bilibili.com", "https://www.vxbilibili.com")\
+                                                 .replace("https://bilibili.com", "https://www.vxbilibili.com")\
+                                                 .replace("http://bilibili.com", "https://www.vxbilibili.com")\
+                                                 .replace("https://b23.tv", "https://vxb23.tv")\
+                                                 .replace("http://b23.tv", "https://vxb23.tv")
 
                         try:
                             await message.delete()
@@ -94,10 +102,7 @@ class AutoMediaBot(discord.Client):
                             print("⚠️ 無法刪除 Bilibili 訊息")
                         await asyncio.sleep(1.5)
                         await message.channel.send(
-                            await message.channel.send(
-    f"🎬 由 @{sender} 提供的 IG Reels：\n"
-    f"👉 {converted_url}"
-)
+                            f"🎬 由 @{sender} 提供的 Bilibili 影片：\n👉 {converted_url}"
                         )
                         break
 
