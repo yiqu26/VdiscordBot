@@ -94,8 +94,7 @@ class AutoMediaBot(discord.Client):
                             print("⚠️ 無法刪除 Bilibili 訊息")
                         await asyncio.sleep(1.5)
                         await message.channel.send(
-                            f"🎬 由 @{sender} 提供的 Bilibili 影片：
-👉 {converted_url}"
+                            f"🎬 由 @{sender} 提供的 IG Reels：\n👉 {converted_url}"
                         )
                         break
 
