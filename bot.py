@@ -23,7 +23,8 @@ class AutoMediaBot(discord.Client):
         for attempt in range(3):
             try:
                 async with session.get(url, timeout=5) as r:
-                    if r.status == 200:
+                    text = await r.text()
+                    if r.status == 200 and "og:video" in text:
                         return True
             except:
                 pass
@@ -54,18 +55,15 @@ class AutoMediaBot(discord.Client):
                                                      .replace("http://www.instagram.com", f"https://{proxy}") \
                                                      .replace("https://instagram.com", f"https://{proxy}") \
                                                      .replace("http://instagram.com", f"https://{proxy}")
-                                try:
-    async with session.get(candidate, timeout=5) as r:
-        text = await r.text()
-        if r.status == 200 and "og:video" in text:
-            converted_url = candidate
-            break
-except:
-    pass
+                                if await self.try_fetch_url(session, candidate):
+                                    converted_url = candidate
+                                    break
 
                         if not converted_url:
-                            path = clean_url.split("instagram.com")[-1]
-                            converted_url = f"https://instagramez.com{path}"
+                            converted_url = clean_url.replace("https://www.instagram.com", "https://instagramez.com") \
+                                                     .replace("http://www.instagram.com", "https://instagramez.com") \
+                                                     .replace("https://instagram.com", "https://instagramez.com") \
+                                                     .replace("http://instagram.com", "https://instagramez.com")
 
                         try:
                             await message.delete()
@@ -74,7 +72,7 @@ except:
 
                         await asyncio.sleep(1.5)
                         await message.channel.send(
-                            f"🎮 由 @{sender} 提供的 IG Reels：\n👉 {converted_url}"
+                            f"🎬 由 @{sender} 提供的 IG Reels：\n👉 {converted_url}"
                         )
                         break
 
@@ -108,7 +106,7 @@ except:
 
                         await asyncio.sleep(1.5)
                         await message.channel.send(
-                            f"🎮 由 @{sender} 提供的 Bilibili 影片：\n👉 {converted_url}"
+                            f"🎬 由 @{sender} 提供的 Bilibili 影片：\n👉 {converted_url}"
                         )
                         break
 
