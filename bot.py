@@ -30,7 +30,7 @@ class AutoMediaBot(discord.Client):
             await asyncio.sleep(1)
         return False
 
-    async def show_loading_animation(self, channel, duration=5):
+    async def show_loading_animation(self, channel, duration=7):
         msg = await channel.send("⏳ 載入中.")
         for i in range(duration * 2):
             dots = "." * ((i % 3) + 1)
