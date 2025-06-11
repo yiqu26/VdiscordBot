@@ -54,9 +54,14 @@ class AutoMediaBot(discord.Client):
                                                      .replace("http://www.instagram.com", f"https://{proxy}") \
                                                      .replace("https://instagram.com", f"https://{proxy}") \
                                                      .replace("http://instagram.com", f"https://{proxy}")
-                                if await self.try_fetch_url(session, candidate):
-                                    converted_url = candidate
-                                    break
+                                try:
+    async with session.get(candidate, timeout=5) as r:
+        text = await r.text()
+        if r.status == 200 and "og:video" in text:
+            converted_url = candidate
+            break
+except:
+    pass
 
                         if not converted_url:
                             path = clean_url.split("instagram.com")[-1]
