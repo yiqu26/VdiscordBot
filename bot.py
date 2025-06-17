@@ -30,13 +30,14 @@ class AutoMediaBot(discord.Client):
             await asyncio.sleep(1)
         return False
 
-    async def show_loading_animation(self, channel, duration=7):
-        msg = await channel.send("⏳ 載入中.")
-        for i in range(duration * 2):
-            dots = "." * ((i % 3) + 1)
-            await msg.edit(content=f"⏳ 載入中{dots}")
-            await asyncio.sleep(0.5)
-        return msg
+    async def show_loading_embed(self, channel):
+        embed = discord.Embed(
+            title="🎬 影片轉換中",
+            description="我們正在嘗試最佳載入方式，請稍候…",
+            color=discord.Color.orange()
+        )
+        embed.set_thumbnail(url="https://i.imgur.com/llF5iyg.gif")  # ✅ 轉圈圈 GIF
+        return await channel.send(embed=embed)
 
     async def on_message(self, message: discord.Message):
         if message.author.bot:
@@ -55,7 +56,7 @@ class AutoMediaBot(discord.Client):
                     proxies = ["ddinstagram.com", "g.ddinstagram.com", "d.ddinstagram.com"]
                     converted_url = None
 
-                    loading_msg = await self.show_loading_animation(message.channel)
+                    loading_msg = await self.show_loading_embed(message.channel)
 
                     async with aiohttp.ClientSession() as session:
                         for proxy in proxies:
@@ -78,7 +79,9 @@ class AutoMediaBot(discord.Client):
                     except discord.Forbidden:
                         print("⚠️ 無法刪除 IG 訊息")
 
-                    await loading_msg.edit(content=f"🎬 由 @{sender} 提供的 IG Reels：\n👉 {converted_url}")
+                    await loading_msg.edit(
+                        content=f"🎬 由 @{sender} 提供的 IG Reels：\n👉 {converted_url}"
+                    )
                     break
 
         # === Bilibili ===
@@ -86,7 +89,8 @@ class AutoMediaBot(discord.Client):
             for word in message.content.split():
                 if "bilibili.com/video/" in word or "b23.tv/" in word:
                     clean_url = simplify_url(word)
-                    loading_msg = await self.show_loading_animation(message.channel)
+
+                    loading_msg = await self.show_loading_embed(message.channel)
 
                     if "b23.tv/" in clean_url:
                         try:
@@ -110,7 +114,9 @@ class AutoMediaBot(discord.Client):
                     except discord.Forbidden:
                         print("⚠️ 無法刪除 Bilibili 訊息")
 
-                    await loading_msg.edit(content=f"🎬 由 @{sender} 提供的 Bilibili 影片：\n👉 {converted_url}")
+                    await loading_msg.edit(
+                        content=f"🎬 由 @{sender} 提供的 Bilibili 影片：\n👉 {converted_url}"
+                    )
                     break
 
 client = AutoMediaBot()
