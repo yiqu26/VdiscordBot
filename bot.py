@@ -30,14 +30,13 @@ class AutoMediaBot(discord.Client):
             await asyncio.sleep(1)
         return False
 
-    async def show_loading_embed(self, channel):
-        embed = discord.Embed(
-            title="影片轉換中",
-            description="我們正在嘗試最佳轉換方式，請稍候...",
-            color=0x9999ff
-        )
-        embed.set_thumbnail(url="https://i.imgur.com/llF5iyg.gif")
-        return await channel.send(embed=embed)
+    async def show_loading_animation(self, channel, duration=7):
+        msg = await channel.send("⏳ 載入中.")
+        for i in range(duration * 2):
+            dots = "." * ((i % 3) + 1)
+            await msg.edit(content=f"⏳ 載入中{dots}")
+            await asyncio.sleep(0.5)
+        return msg
 
     async def on_message(self, message: discord.Message):
         if message.author.bot:
@@ -56,14 +55,14 @@ class AutoMediaBot(discord.Client):
                     proxies = ["ddinstagram.com", "g.ddinstagram.com", "d.ddinstagram.com"]
                     converted_url = None
 
-                    loading_msg = await self.show_loading_embed(message.channel)
+                    loading_msg = await self.show_loading_animation(message.channel)
 
                     async with aiohttp.ClientSession() as session:
                         for proxy in proxies:
                             candidate = clean_url.replace("https://www.instagram.com", f"https://{proxy}") \
-                                                    .replace("http://www.instagram.com", f"https://{proxy}") \
-                                                    .replace("https://instagram.com", f"https://{proxy}") \
-                                                    .replace("http://instagram.com", f"https://{proxy}")
+                                                 .replace("http://www.instagram.com", f"https://{proxy}") \
+                                                 .replace("https://instagram.com", f"https://{proxy}") \
+                                                 .replace("http://instagram.com", f"https://{proxy}")
                             if await self.try_fetch_url(session, candidate):
                                 converted_url = candidate
                                 break
@@ -79,11 +78,7 @@ class AutoMediaBot(discord.Client):
                     except discord.Forbidden:
                         print("⚠️ 無法刪除 IG 訊息")
 
-                    embed = discord.Embed(
-                        description=f"🎥 @{sender} 提供的 IG 連結：\n🔎 {converted_url}",
-                        color=0xf5a623
-                    )
-                    await loading_msg.edit(embed=embed)
+                    await loading_msg.edit(content=f"🎬 由 @{sender} 提供的 IG Reels：\n👉 {converted_url}")
                     break
 
         # === Bilibili ===
@@ -91,7 +86,7 @@ class AutoMediaBot(discord.Client):
             for word in message.content.split():
                 if "bilibili.com/video/" in word or "b23.tv/" in word:
                     clean_url = simplify_url(word)
-                    loading_msg = await self.show_loading_embed(message.channel)
+                    loading_msg = await self.show_loading_animation(message.channel)
 
                     if "b23.tv/" in clean_url:
                         try:
@@ -115,11 +110,7 @@ class AutoMediaBot(discord.Client):
                     except discord.Forbidden:
                         print("⚠️ 無法刪除 Bilibili 訊息")
 
-                    embed = discord.Embed(
-                        description=f"🎥 @{sender} 提供的 Bilibili 連結：\n🔎 {converted_url}",
-                        color=0x00b1e9
-                    )
-                    await loading_msg.edit(embed=embed)
+                    await loading_msg.edit(content=f"🎬 由 @{sender} 提供的 Bilibili 影片：\n👉 {converted_url}")
                     break
 
 client = AutoMediaBot()
